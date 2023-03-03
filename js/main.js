@@ -80,8 +80,11 @@ for (const[key,value] of Object.entries(obj)){
       nestedResult.results.push(newObject)}
 
 
+      /***********************
+       * Problem hier ist das ich nicht in die tieferen Objecte reinkomme-----rekursive Funktion????
+       * ****************************/
       // else{
-      //    path=path+`[${key}]`
+      //    path=`${path}[${key}]`
       //    console.log(path)
       //    for(const[key,value] of Object.entries(obj[path])){
       //       if(typeof value!=='object' && value!==null){

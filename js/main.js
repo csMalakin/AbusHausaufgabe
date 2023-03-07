@@ -43,73 +43,34 @@ const jsonSource = {
   },
 };
 
-let result = {
-  results: [],
-};
+let result = [];
 
 let obj = jsonSource;
 
-for (const [key, value] of Object.entries(obj)) {
-  if (isObject(value)) {
-    stepIn(value);
-  } else addResultObject(findPath(obj, key, value), value);
-}
+recurse(obj);
 
 console.log(JSON.stringify(result, null, 4));
 
 
-/**Funktionen**/
-
-function stepIn(value) {
-  for (const [insideKey, insideValue] of Object.entries(value)) {
-    if (insideValue instanceof Array) {
-      for (let i = 0; i < insideValue.length; i++) {
-        if (typeof insideValue[i] === "object") {
-          stepIn(insideValue[i]);
-        }
-      }
-    } else if (
-      typeof insideValue !== "object" && !(insideValue instanceof Array)
-    ) {
-      addResultObject(findPath(obj, insideKey, insideValue), insideValue);
-    } else {
-      stepIn(insideValue);
+function recurse(value, name) {
+  if (Object(value) !== value) {
+    result.push({ name: name, value: value });
+  } else if (Array.isArray(value)) {
+    
+    for (let i = 0; i < value.length; i++) {
+      recurse(value[i], name + "[" + i + "]");
+    }
+    if (value.length === 0) {
+      result.push({ name: name, value: [] });
+    }
+  } else {
+    let isEmpty = true;
+    for (const p in value) {
+      isEmpty = false;
+      recurse(value[p], name ? name + "." + p : p);
+    }
+    if (isEmpty) {
+      result.push({ name: name, value: {} });
     }
   }
 }
-
-function addResultObject(path, value) {
-  let objForArray = { name: path, value: value };
-  result.results.push(objForArray);
-}
-
-function isObject(value) {
-  return typeof value === "object" && value !== null ? true : false;
-}
-
-function findPath(obj, name, value, currentPath) {
-  currentPath = currentPath || "";
-
-  let matchingPath;
-
-  if (!obj || typeof obj !== "object") return;
-
-  if (obj[name] === value) return `${currentPath}['${name}']`;
-
-  for (const key of Object.keys(obj)) {
-    if (key === name && obj[key] === value) {
-      matchingPath = currentPath;
-    } else {
-      if (currentPath === "") {
-        matchingPath = findPath(obj[key], name, value, `${key}.`);
-      } else {
-        matchingPath = findPath(obj[key], name, value, `${currentPath}['${key}']`);
-      }
-    }
-
-    if (matchingPath) break;
-  }
-
-  return matchingPath;
-}
-

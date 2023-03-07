@@ -43,7 +43,7 @@ const jsonSource = {
   },
 };
 
-let result = [];
+let result = {"result":[]};
 
 let obj = jsonSource;
 
@@ -54,7 +54,7 @@ console.log(JSON.stringify(result, null, 4));
 
 function recurse(value, name) {
   if (Object(value) !== value) {
-    result.push({ name: name, value: value });
+    result.result.push({ name: name, value: value });
   } else if (Array.isArray(value)) {
     
     for (let i = 0; i < value.length; i++) {
@@ -70,7 +70,7 @@ function recurse(value, name) {
       recurse(value[p], name ? name + "." + p : p);
     }
     if (isEmpty) {
-      result.push({ name: name, value: {} });
+      result.result.push({ name: name, value: {} });
     }
   }
 }
